@@ -238,7 +238,11 @@ module Octokit
       conn_opts[:ssl] = { :verify_mode => @ssl_verify_mode } if @ssl_verify_mode
       conn = Faraday.new(conn_opts) do |http|
         if basic_authenticated?
-          http.request :basic_auth, @login, @password
+          if Gem::Version.new(Faraday::VERSION).segments.first >= 2
+            http.request :authorization, :basic, @login, @password
+          else
+            http.request :basic_auth, @login, @password
+          end
         elsif token_authenticated?
           http.request :authorization, 'token', @access_token
         elsif bearer_authenticated?

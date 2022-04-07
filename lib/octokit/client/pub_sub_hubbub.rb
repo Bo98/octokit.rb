@@ -91,7 +91,11 @@ module Octokit
         conn = Faraday.new(:url => @api_endpoint) do |http|
           http.headers[:user_agent] = user_agent
           if basic_authenticated?
-            http.request :basic_auth, @login, @password
+            if Gem::Version.new(Faraday::VERSION).segments.first >= 2
+              http.request :authorization, :basic, @login, @password
+            else
+              http.request :basic_auth, @login, @password
+            end
           elsif token_authenticated?
             http.request :authorization, 'token', @access_token
           end

@@ -107,13 +107,21 @@ module Octokit
         http.headers[:content_type] = "application/json"
         http.headers[:user_agent] = user_agent
         if basic_authenticated?
-          http.request :basic_auth, @login, @password
+          if Gem::Version.new(Faraday::VERSION).segments.first >= 2
+            http.request :authorization, :basic, @login, @password
+          else
+            http.request :basic_auth, @login, @password
+          end
         elsif token_authenticated?
           http.request :authorization, 'token', @access_token
         elsif bearer_authenticated?
           http.request :authorization, 'Bearer', @bearer_token
         elsif application_authenticated?
-          http.request :basic_auth, @client_id, @client_secret
+          if Gem::Version.new(Faraday::VERSION).segments.first >= 2
+            http.request :authorization, :basic, @client_id, @client_secret
+          else
+            http.request :basic_auth, @client_id, @client_secret
+          end
         end
       end
     end

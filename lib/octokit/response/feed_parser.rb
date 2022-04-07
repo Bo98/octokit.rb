@@ -5,7 +5,7 @@ module Octokit
   module Response
 
     # Parses RSS and Atom feed responses.
-    class FeedParser < Faraday::Response::Middleware
+    class FeedParser < Faraday::Middleware
 
       def on_complete(env)
         if env[:response_headers]["content-type"] =~ /(\batom|\brss)/

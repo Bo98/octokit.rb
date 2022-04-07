@@ -7,7 +7,7 @@ module Octokit
 
     # This class raises an Octokit-flavored exception based
     # HTTP status codes returned by the API
-    class RaiseError < Faraday::Response::Middleware
+    class RaiseError < Faraday::Middleware
 
       def on_complete(response)
         if error = Octokit::Error.from_response(response)
